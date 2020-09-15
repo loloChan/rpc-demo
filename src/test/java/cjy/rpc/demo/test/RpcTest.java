@@ -8,6 +8,7 @@ import io.netty.channel.Channel;
 import org.junit.Test;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.springframework.context.support.ClassPathXmlApplicationContext;
 
 import java.util.UUID;
 
@@ -30,6 +31,13 @@ public class RpcTest {
     @Test
     public void serverStart() throws Exception{
         new ServerSocket(null, "baga", 8888).start();
+        System.in.read();
+    }
+
+    @Test
+    public void testXml() throws Exception{
+        ClassPathXmlApplicationContext context = new ClassPathXmlApplicationContext("classpath:testXml.xml");
+        context.start();
         System.in.read();
     }
 

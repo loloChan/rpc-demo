@@ -1,0 +1,20 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<beans xmlns="http://www.springframework.org/schema/beans"
+       xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+       xmlns:rpc="http://rpc.cjy.demo/schema/rpc"
+       xsi:schemaLocation="http://www.springframework.org/schema/beans
+       http://www.springframework.org/schema/beans/spring-beans.xsd
+	  http://rpc.cjy.demo/schema/rpc
+	  http://rpc.cjy.demo/schema/rpc/rpc.xsd">
+
+    <!-- redis配置，保存链接 -->
+    <rpc:registry id="rpc_registry" protocol="redis" address="192.168.174.129" port="6379"/>
+
+    <rpc:protocol id="rpc_protocol" protocol="baga" port="8989"/>
+
+    <rpc:provider id="pro_helloService" protocol="baga" interface="cjy.rpc.demo.test.service.HelloService"
+                  ref="helloService" alias="helloService"/>
+
+    <rpc:consumer id="consumer_helloService" interface="cjy.rpc.demo.test.service.HelloService" alias="helloService"/>
+
+</beans>

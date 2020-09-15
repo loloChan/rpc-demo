@@ -91,16 +91,14 @@ public class RpcBeanDefinitionParser implements BeanDefinitionParser {
         try{
             getter = beanClass.getMethod("get" + methodName.substring(3));
         } catch (NoSuchMethodException e) {
-            //TODO 打印日志
-            logger.error(e.getMessage(), e);
+            logger.info("no such method : class = {}, methodName = {}",beanClass.getName(), "get" + methodName.substring(3));
         }
 
         if (null == getter) {
             try {
                 getter = beanClass.getMethod("is" + methodName.substring(3));
             } catch (NoSuchMethodException e) {
-                //TODO 打印日志
-                logger.error(e.getMessage(),e);
+                logger.info("no such method : class = {} methodName = {}",beanClass.getName(),"is" + methodName.substring(3));
             }
         }
 

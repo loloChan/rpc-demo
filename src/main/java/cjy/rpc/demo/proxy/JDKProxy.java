@@ -5,6 +5,9 @@ import cjy.rpc.demo.netty.msg.Request;
 import java.lang.reflect.InvocationHandler;
 import java.lang.reflect.Proxy;
 
+/**
+ * @author chenjianyuan
+ */
 public class JDKProxy {
 
     /**

@@ -11,6 +11,7 @@ import java.lang.reflect.Method;
  * 使用jdk动态代理生成服务接口的代理类
  * 由代理类实现远程链接请求并获取结果
  * 也就是说，在消费端，该类属于stub，用于网络连接调用。
+ * @author chenjianyuan
  */
 public class JDKInvocationHandler implements InvocationHandler {
 

@@ -6,6 +6,7 @@ import redis.clients.jedis.JedisPoolConfig;
 
 /**
  * redis作为服务的注册中心
+ * @author chenjianyuan
  */
 public class RedisRegistryCenter {
 
@@ -32,7 +33,7 @@ public class RedisRegistryCenter {
      * @return
      */
     public static Long registryProvider(String key, String infos) {
-        return jedis.sadd(key);
+        return jedis.sadd(key,infos);
     }
 
     /**

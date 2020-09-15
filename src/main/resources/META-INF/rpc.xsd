@@ -7,7 +7,7 @@
     <xsd:import namespace="http://www.springframework.org/schema/beans"/>
 
     <!-- cjy.rpc.demo.config.RegistryConfig -->
-    <xsd:element name="server">
+    <xsd:element name="registry">
         <xsd:complexType>
             <xsd:complexContent>
                 <xsd:extension base="beans:identifiedType">

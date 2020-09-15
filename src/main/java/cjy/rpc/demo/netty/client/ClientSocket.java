@@ -15,8 +15,10 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import java.util.concurrent.CountDownLatch;
-import java.util.concurrent.TimeUnit;
 
+/**
+ * @author chenjianyuan
+ */
 public class ClientSocket implements Runnable{
 
     /**
@@ -65,6 +67,14 @@ public class ClientSocket implements Runnable{
                     });
             ChannelFuture future = bootstrap.connect(host, port).sync();
             this.channelFuture = future;
+            future.addListener(future1 -> {
+                if (future1.isSuccess()) {
+                    latch.countDown();
+                    logger.info("client connect to ip={} port={} success!",host,port);
+                }else {
+                    logger.error(future1.cause().getMessage(),future1.cause());
+                }
+            });
             future.channel().closeFuture().sync();
         } catch (Exception e) {
             logger.error(e.getMessage(),e);
@@ -91,5 +101,14 @@ public class ClientSocket implements Runnable{
      */
     public void start() {
         new Thread(this).start();
+    }
+
+    /**
+     * 判断连接是否有效
+     * @return
+     */
+    public boolean isActive() {
+        Channel channel = this.channelFuture.channel();
+        return channel.isActive();
     }
 }

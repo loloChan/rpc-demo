@@ -51,10 +51,11 @@ public class ServerSocket implements Runnable {
     @Override
     public void run() {
 
-        EventLoopGroup boss = new NioEventLoopGroup(1);
-        EventLoopGroup worker = new NioEventLoopGroup();
-
         try {
+            EventLoopGroup boss = new NioEventLoopGroup(1);
+            EventLoopGroup worker = new NioEventLoopGroup();
+
+
 
             ServerBootstrap bootstrap = new ServerBootstrap();
             bootstrap.group(boss,worker)
@@ -66,13 +67,16 @@ public class ServerSocket implements Runnable {
                             channel.pipeline().addLast(new ServerHandler(applicationContext));
                         }
                     });
-            if (isPortUsing(port)) {
-                logger.error("port={} is using",port);
-                return;
-            }
+
             ChannelFuture future = bootstrap.bind(port).sync();
+            future.addListener(future1 -> {
+                if (future1.isSuccess()) {
+                    logger.info("server provider service to port={},protocol={}",port,protocol);
+                }else {
+                    logger.error(future1.cause().getMessage(),future1.cause());
+                }
+            });
             future.channel().closeFuture().sync();
-            ProviderServerInfo.setServerPort(protocol,port);
         } catch (Exception e) {
             logger.error(e.getMessage(),e);
         }
@@ -86,11 +90,11 @@ public class ServerSocket implements Runnable {
      */
     private boolean isPortUsing(int port) {
         try {
-            Socket socket = new Socket("localhost", port);
-            socket.close();
+            java.net.ServerSocket serverSocket = new java.net.ServerSocket(port);
+            serverSocket.close();
             return false;
         } catch (IOException e) {
-
+            logger.error(e.getMessage(),e);
         }
         return true;
     }

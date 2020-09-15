@@ -1,5 +1,7 @@
 package cjy.rpc.demo.netty.future;
 
+import cjy.rpc.demo.netty.client.ClientSocket;
+import cjy.rpc.demo.netty.manage.NetManager;
 import cjy.rpc.demo.netty.msg.Request;
 import cjy.rpc.demo.netty.msg.Response;
 import io.netty.channel.Channel;
@@ -57,7 +59,8 @@ public final class SyncWrite {
         SyncWriteFutureCache.syncKey.put(requestId, writeFuture);
 
         //通过ip+端口号获取channle连接
-        Channel channel = null;
+        ClientSocket clientSocket = NetManager.getClientSocket(request.getAddress(), request.getPort());
+        Channel channel = clientSocket.getChannelFuture().channel();
 
         Response response = doInvoke(channel, request, writeFuture, timeout);
 
@@ -79,15 +82,18 @@ public final class SyncWrite {
      */
     private Response doInvoke(final Channel channel, final Request request,
                              final WriteFuture<Response> writeFuture, final long timeout) throws Exception {
-        channel.writeAndFlush(request).addListener((future) -> {
-            writeFuture.setWriteSuccess(future.isSuccess());
-            writeFuture.setCause(future.cause());
+        //channel写同步
+        synchronized (channel) {
+            channel.writeAndFlush(request).addListener((future) -> {
+                writeFuture.setWriteSuccess(future.isSuccess());
+                writeFuture.setCause(future.cause());
 
-            //失败移除
-            if (!future.isSuccess()) {
-                SyncWriteFutureCache.syncKey.remove(request.getRequestId());
-            }
-        });
+                //失败移除
+                if (!future.isSuccess()) {
+                    SyncWriteFutureCache.syncKey.remove(request.getRequestId());
+                }
+            });
+        }
 
         //此方法会阻塞，直至netty客户端收到响应消息，或等待时间结束返回
         Response response = writeFuture.get(timeout, TimeUnit.MILLISECONDS);
